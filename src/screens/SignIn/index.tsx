@@ -1,22 +1,59 @@
 import React from "react";
 import Button from "~/components/Button";
 import Input from "~/components/Input";
+import brandImg from "~/assets/brand.png";
+import {
+    Keyboard,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+} from "react-native";
 
-import { Container } from "./styles";
+import {
+    Container,
+    Content,
+    Title,
+    Brand,
+    ForgotPasswordButton,
+    ForgotPasswordLabel,
+} from "./styles";
 
 const SignIn = () => {
     return (
         <Container>
-            <Input
-                placeholder="E-mail"
-                type="secondary"
-                autoCorrect={false}
-                autoCapitalize="none"
-            />
+            <KeyboardAvoidingView behavior="position">
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <Content>
+                        <Brand source={brandImg} />
 
-            <Input placeholder="Login" type="secondary" secureTextEntry />
+                        <Title>Login</Title>
 
-            <Button title="Entrar" type="secondary" isLoading={true} />
+                        <Input
+                            placeholder="E-mail"
+                            type="secondary"
+                            autoCorrect={false}
+                            autoCapitalize="none"
+                        />
+
+                        <Input
+                            placeholder="Login"
+                            type="secondary"
+                            secureTextEntry
+                        />
+
+                        <ForgotPasswordButton>
+                            <ForgotPasswordLabel>
+                                Esqueci minha senha
+                            </ForgotPasswordLabel>
+                        </ForgotPasswordButton>
+
+                        <Button
+                            title="Entrar"
+                            type="secondary"
+                            isLoading={false}
+                        />
+                    </Content>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </Container>
     );
 };
