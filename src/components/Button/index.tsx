@@ -1,6 +1,6 @@
 import React from "react";
-import { ActivityIndicator } from "react-native";
 import { RectButtonProps } from "react-native-gesture-handler";
+
 import theme from "~/theme";
 
 import { Container, Title, Load, TypeProps } from "./styles";
@@ -20,10 +20,7 @@ const Button: React.FC<Props> = ({
     return (
         <Container type={type} enabled={!isLoading} {...rest}>
             {isLoading ? (
-                <ActivityIndicator
-                    color={theme.COLORS.TITLE}
-                    animating={true}
-                />
+                <Load color={theme.COLORS.TITLE} animating={true} />
             ) : (
                 <Title>{title}</Title>
             )}
