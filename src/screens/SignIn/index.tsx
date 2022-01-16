@@ -5,6 +5,7 @@ import brandImg from "~/assets/brand.png";
 import {
     Keyboard,
     KeyboardAvoidingView,
+    Platform,
     TouchableWithoutFeedback,
 } from "react-native";
 
@@ -20,7 +21,9 @@ import {
 const SignIn = () => {
     return (
         <Container>
-            <KeyboardAvoidingView behavior="position">
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+            >
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <Content>
                         <Brand source={brandImg} />

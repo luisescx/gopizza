@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { getBottomSpace } from "react-native-iphone-x-helper";
 
 export const Container = styled(LinearGradient).attrs(({ theme }) => ({
     colors: theme.COLORS.GRADIENT,
@@ -10,7 +11,12 @@ export const Container = styled(LinearGradient).attrs(({ theme }) => ({
     justify-content: center;
 `;
 
-export const Content = styled.View`
+export const Content = styled.ScrollView.attrs({
+    showVerticalScrollIndicator: false,
+    contentContainerStyle: {
+        paddingBottom: getBottomSpace() + 48,
+    },
+})`
     width: 100%;
     padding: 0 32px;
 `;
@@ -30,8 +36,8 @@ export const Brand = styled.Image.attrs({
     resizeMode: "contain",
 })`
     height: 340px;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    margin-top: 64px;
+    margin-bottom: 32px;
 `;
 
 export const ForgotPasswordButton = styled.TouchableOpacity`
