@@ -9,7 +9,7 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextData);
 
 function AuthProvider({ children }: AuthProviderProps) {
-    <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 }
 
 function useAuth() {
@@ -18,4 +18,4 @@ function useAuth() {
     return context;
 }
 
-export default { AuthProvider, useAuth };
+export { AuthProvider, useAuth };
