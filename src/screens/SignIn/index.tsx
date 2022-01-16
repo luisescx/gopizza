@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "~/components/Button";
 import Input from "~/components/Input";
 import brandImg from "~/assets/brand.png";
@@ -17,8 +17,23 @@ import {
     ForgotPasswordButton,
     ForgotPasswordLabel,
 } from "./styles";
+import { useAuth } from "~/hooks/auth";
 
-const SignIn = () => {
+const SignIn: React.FC = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const { signIn, isLogging, forgotPassword } = useAuth();
+
+    function handleSignIn() {
+        console.log("handleSignIn");
+        signIn(email, password);
+    }
+
+    function handleForgotPassword() {
+        forgotPassword(email);
+    }
+
     return (
         <Container>
             <KeyboardAvoidingView
@@ -35,15 +50,17 @@ const SignIn = () => {
                             type="secondary"
                             autoCorrect={false}
                             autoCapitalize="none"
+                            onChangeText={setEmail}
                         />
 
                         <Input
                             placeholder="Login"
                             type="secondary"
                             secureTextEntry
+                            onChangeText={setPassword}
                         />
 
-                        <ForgotPasswordButton>
+                        <ForgotPasswordButton onPress={handleForgotPassword}>
                             <ForgotPasswordLabel>
                                 Esqueci minha senha
                             </ForgotPasswordLabel>
@@ -52,7 +69,8 @@ const SignIn = () => {
                         <Button
                             title="Entrar"
                             type="secondary"
-                            isLoading={false}
+                            isLoading={isLogging}
+                            onPress={handleSignIn}
                         />
                     </Content>
                 </TouchableWithoutFeedback>
