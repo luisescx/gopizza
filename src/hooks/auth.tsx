@@ -84,7 +84,7 @@ function AuthProvider({ children }: AuthProviderProps) {
                     return Alert.alert("Login", "E-mail e/ou senha inválida.");
                 }
 
-                return Alert.alert("Login", "Não foi possível oo login.");
+                return Alert.alert("Login", "Não foi possível fazer o login.");
             })
             .finally(() => setIsLogging(false));
     }
