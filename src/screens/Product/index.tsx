@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import Button from "~/components/Button";
 import ButtonBack from "~/components/ButtonBack";
 import Input from "~/components/Input";
 import InputPrice from "~/components/InputPrice";
 import Photo from "~/components/Photo";
+import { Alert } from "react-native";
+import firestore from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
 
 import {
     Container,
@@ -20,40 +24,88 @@ import {
     MaxCharacters,
 } from "./styles";
 
-interface ProductDTO {
-    image: string;
-    name: string;
-    description: string;
-    priceSizeP: string;
-    priceSizeM: string;
-    priceSizeG: string;
-}
-
 interface ProductChangeProps {
     value: string;
     keyName: string;
 }
 
 const Product: React.FC = () => {
-    // const [image, setImage] = useState("");
-    // const [name, setName] = useState("");
-    // const [description, setDescription] = useState("");
-    // const [priceSizeP, setPriceSizeP] = useState("");
-    // const [priceSizeM, setPriceSizeM] = useState("");
-    // const [priceSizeG, setPriceSizeG] = useState("");
+    const [image, setImage] = useState("");
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [priceSizeP, setPriceSizeP] = useState("");
+    const [priceSizeM, setPriceSizeM] = useState("");
+    const [priceSizeG, setPriceSizeG] = useState("");
 
-    const [pizzaProduct, setPizzaProduct] = useState({} as ProductDTO);
     const [isLoading, setIsLoading] = useState(false);
 
-    function handleProductChange({ value, keyName }: ProductChangeProps) {
-        setPizzaProduct((prevState) => {
-            return { ...prevState, [keyName]: value };
-        });
-    }
+    const handleImagePicker = async () => {
+        const { status } =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    function handleSubmitProduct() {
-        setPizzaProduct({} as ProductDTO);
-    }
+        if (status === "granted") {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                aspect: [4, 4],
+            });
+
+            if (!result.cancelled) {
+                setImage(result.uri);
+            }
+        }
+    };
+
+    const handleAdd = useCallback(async () => {
+        if (!name.trim()) {
+            return Alert.alert("Cadastro", "Informe o nome da pizza");
+        }
+
+        if (!description.trim()) {
+            return Alert.alert("Cadastro", "Informe a descrição da pizza");
+        }
+
+        if (!image) {
+            return Alert.alert("Cadastro", "Selecione a imagem da pizza");
+        }
+
+        if (!priceSizeP || !priceSizeM || !priceSizeG) {
+            return Alert.alert(
+                "Cadastro",
+                "Informe o preço de todos os tamanhos da pizza."
+            );
+        }
+
+        setIsLoading(true);
+
+        const fileName = new Date().getTime();
+        const reference = storage().ref(`/pizzas/${fileName}.png`);
+
+        await reference.putFile(image);
+        const photo_url = await reference.getDownloadURL();
+
+        firestore()
+            .collection("pizzas")
+            .add({
+                name,
+                name_insensitive: name.toLowerCase().trim(),
+                description,
+                prices_sizes: {
+                    p: priceSizeP,
+                    m: priceSizeM,
+                    g: priceSizeG,
+                },
+                photo_url,
+                photo_path: reference.fullPath,
+            })
+            .then(() =>
+                Alert.alert("Cadastro", "Pizza cadastrada com sucesso.")
+            )
+            .catch(() =>
+                Alert.alert("Cadastro", "Não foi possível cadastrar a pizza.")
+            );
+
+        setIsLoading(false);
+    }, [name, description, image, priceSizeP, priceSizeM, priceSizeG]);
 
     return (
         <Container behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -69,20 +121,19 @@ const Product: React.FC = () => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Upload>
-                    <Photo uri={""} />
+                    <Photo uri={image} />
 
-                    <PickImageButton title="Carregar" type="secondary" />
+                    <PickImageButton
+                        title="Carregar"
+                        type="secondary"
+                        onPress={handleImagePicker}
+                    />
                 </Upload>
 
                 <Form>
                     <InputGroup>
                         <Label>Nome</Label>
-                        <Input
-                            value={pizzaProduct.name}
-                            onChangeText={(value) =>
-                                handleProductChange({ value, keyName: "name" })
-                            }
-                        />
+                        <Input value={name} onChangeText={setName} />
                     </InputGroup>
 
                     <InputGroup>
@@ -95,13 +146,8 @@ const Product: React.FC = () => {
                             multiline
                             maxLength={60}
                             style={{ height: 80 }}
-                            value={pizzaProduct.description}
-                            onChangeText={(value) =>
-                                handleProductChange({
-                                    value,
-                                    keyName: "description",
-                                })
-                            }
+                            value={description}
+                            onChangeText={setDescription}
                         />
                     </InputGroup>
 
@@ -110,40 +156,25 @@ const Product: React.FC = () => {
 
                         <InputPrice
                             size="P"
-                            value={pizzaProduct.priceSizeP}
-                            onChangeText={(value) =>
-                                handleProductChange({
-                                    value,
-                                    keyName: "priceSizeP",
-                                })
-                            }
+                            value={priceSizeP}
+                            onChangeText={setPriceSizeP}
                         />
                         <InputPrice
                             size="M"
-                            value={pizzaProduct.priceSizeM}
-                            onChangeText={(value) =>
-                                handleProductChange({
-                                    value,
-                                    keyName: "priceSizeM",
-                                })
-                            }
+                            value={priceSizeM}
+                            onChangeText={setPriceSizeM}
                         />
                         <InputPrice
                             size="G"
-                            value={pizzaProduct.priceSizeG}
-                            onChangeText={(value) =>
-                                handleProductChange({
-                                    value,
-                                    keyName: "priceSizeG",
-                                })
-                            }
+                            value={priceSizeG}
+                            onChangeText={setPriceSizeG}
                         />
                     </InputGroup>
 
                     <Button
                         title="Cadastrar Pizza"
                         isLoading={isLoading}
-                        onPress={handleSubmitProduct}
+                        onPress={handleAdd}
                     />
                 </Form>
             </ScrollView>
