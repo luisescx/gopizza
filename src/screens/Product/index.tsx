@@ -24,11 +24,6 @@ import {
     MaxCharacters,
 } from "./styles";
 
-interface ProductChangeProps {
-    value: string;
-    keyName: string;
-}
-
 const Product: React.FC = () => {
     const [image, setImage] = useState("");
     const [name, setName] = useState("");
