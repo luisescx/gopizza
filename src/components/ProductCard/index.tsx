@@ -1,5 +1,5 @@
-import React from 'react';
-import {  RectButtonProps } from 'react-native-gesture-handler';
+import React from "react";
+import { RectButtonProps } from "react-native-gesture-handler";
 import {
     Container,
     Content,
@@ -8,10 +8,10 @@ import {
     Line,
     Identification,
     Name,
-    Description
-} from './styles';
-import { Feather } from '@expo/vector-icons';
-import { useTheme } from 'styled-components/native';
+    Description,
+} from "./styles";
+import { Feather } from "@expo/vector-icons";
+import { useTheme } from "styled-components/native";
 
 export interface ProductProps {
     id: string;
@@ -24,27 +24,31 @@ export interface Props extends RectButtonProps {
     data: ProductProps;
 }
 
-const ProductCard: React.FC<Props> = ({ data }) => {
+const ProductCard: React.FC<Props> = ({ data, ...rest }) => {
     const { COLORS } = useTheme();
 
     return (
         <Container>
-                <Content>
-                    <Image source={{ uri: data.photo_url}} />
+            <Content {...rest}>
+                <Image source={{ uri: data.photo_url }} />
 
-                    <Details>
-                        <Identification>
-                            <Name>{data.name}</Name>
-                            <Feather name="chevron-right" size={18} color={COLORS.SHAPE} />
-                        </Identification>
+                <Details>
+                    <Identification>
+                        <Name>{data.name}</Name>
+                        <Feather
+                            name="chevron-right"
+                            size={18}
+                            color={COLORS.SHAPE}
+                        />
+                    </Identification>
 
-                        <Description>{data.description}</Description>
-                    </Details>
-                </Content>
+                    <Description>{data.description}</Description>
+                </Details>
+            </Content>
 
-                <Line />
+            <Line />
         </Container>
     );
-}
+};
 
 export default ProductCard;

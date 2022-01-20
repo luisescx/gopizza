@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components/native';
-import { RectButton } from 'react-native-gesture-handler';
+import styled, { css } from "styled-components/native";
+import { RectButton } from "react-native-gesture-handler";
 
 export const Container = styled.View`
     width: 100%;
@@ -7,12 +7,12 @@ export const Container = styled.View`
 
 export const Content = styled(RectButton)`
     flex-direction: row;
-    align-items:center;
+    align-items: center;
 `;
 
 export const Image = styled.Image`
     width: 104px;
-    height: 104;
+    height: 104px;
     border-radius: 52px;
     margin-right: 20px;
 `;
@@ -33,7 +33,7 @@ export const Name = styled.Text`
 
 export const Identification = styled.View`
     flex-direction: row;
-    align-items: center; 
+    align-items: center;
 `;
 
 export const Description = styled.Text`
