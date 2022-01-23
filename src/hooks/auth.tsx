@@ -105,6 +105,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     async function signOut() {
         await auth().signOut();
         await AsyncStorage.removeItem(USER_COLLECTION);
+        setUser(null);
     }
 
     async function forgotPassword(email: string) {
