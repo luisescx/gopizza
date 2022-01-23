@@ -20,14 +20,14 @@ import Search from "~/components/Search";
 import ProductCard, { ProductProps } from "~/components/ProductCard";
 import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useAuth } from "~/hooks/auth";
 
 const Home = () => {
     const [pizzas, setPizzas] = useState<ProductProps[]>([]);
     const [search, setSearch] = useState("");
-
     const navigation = useNavigation();
-
     const { COLORS } = useTheme();
+    const { user, signOut } = useAuth();
 
     const fetchPizzas = useCallback((value: string) => {
         const formattedValue = value.toLocaleLowerCase().trim();
@@ -64,7 +64,8 @@ const Home = () => {
 
     const handleOpen = useCallback(
         (id: string) => {
-            navigation.navigate("product", { id });
+            const route = user?.isAdmin ? "product" : "order";
+            navigation.navigate(route, { id });
         },
         [navigation]
     );
@@ -87,7 +88,7 @@ const Home = () => {
                     <GreetingText>Olá, Admin</GreetingText>
                 </Greeting>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={signOut}>
                     <MaterialIcons
                         name="logout"
                         color={COLORS.TITLE}
@@ -125,11 +126,13 @@ const Home = () => {
                 }}
             />
 
-            <NewProductButton
-                title="Cadastrar Pizza"
-                type="secondary"
-                onPress={handleAdd}
-            />
+            {!!user?.isAdmin && (
+                <NewProductButton
+                    title="Cadastrar Pizza"
+                    type="secondary"
+                    onPress={handleAdd}
+                />
+            )}
         </Container>
     );
 };
